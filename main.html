@@ -12,8 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Renacer | Leonor Alicia Ardohain</title>
     
-    <!-- Favicon: Imagen del libro -->
-    <link rel="icon" type="image/jpeg" href="image_b6dce1.jpg">
+    <!-- Favicon: Imagen del libro (ruta local actualizada) -->
+    <link rel="icon" type="image/jpeg" href="libro.jpeg">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -302,7 +302,7 @@
             </p>
         </div>
 
-        <!-- GRID DE PRODUCTOS (Ajustado para 2 items centralizados) -->
+        <!-- GRID DE PRODUCTOS -->
         <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-10 lg:gap-16 pb-12">
             <!-- Los productos se inyectan por JS -->
         </div>
@@ -323,11 +323,9 @@
             </p>
 
             <div class="flex space-x-6 mb-12">
+                <!-- Solo Instagram y Email, como se solicitó -->
                 <a href="#" target="_blank" class="w-10 h-10 rounded-full border border-yellow-600/30 flex items-center justify-center text-slate-400 hover:bg-[#d4af37] hover:text-black transition-all hover:scale-110">
                     <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://wa.me/5491133821624" target="_blank" class="w-10 h-10 rounded-full border border-yellow-600/30 flex items-center justify-center text-slate-400 hover:bg-[#d4af37] hover:text-black transition-all hover:scale-110">
-                    <i class="fab fa-whatsapp"></i>
                 </a>
                 <a href="#" target="_blank" class="w-10 h-10 rounded-full border border-yellow-600/30 flex items-center justify-center text-slate-400 hover:bg-[#d4af37] hover:text-black transition-all hover:scale-110">
                     <i class="fas fa-envelope"></i>
@@ -354,6 +352,7 @@
                 <span class="text-slate-400 text-xs font-brand uppercase tracking-widest">Total a Pagar</span>
                 <span id="cart-total" class="text-3xl font-serif text-[#d4af37] italic">$ 0</span>
             </div>
+            <!-- El botón de WhatsApp del carrito se mantiene porque es donde finalizan la compra -->
             <button onclick="sendToWhatsApp()" class="btn-action w-full py-4 font-brand font-bold uppercase tracking-widest text-xs flex items-center justify-center shadow-lg shadow-black">
                 <i class="fab fa-whatsapp text-lg mr-3"></i> Confirmar por WhatsApp
             </button>
@@ -369,7 +368,7 @@
     <script>
         const WHATSAPP_PHONE = "5491133821624"; 
         
-        // Base de datos estática requerida con los 2 libros
+        // Base de datos estática requerida con los 2 libros (con rutas locales .jpeg y .gif)
         const products = [
             {
                 id: 1,
@@ -377,9 +376,9 @@
                 formato: "Libro Físico",
                 descripcion: "Páginas cargadas de vida, con alegría y dolor. Admirable por la resiliencia que brota allí. Una invitación a habitar nuestra vida sin máscaras.",
                 infoCorta: "Opción para comprar libro físico.",
-                precio: 18500, // Precio de ejemplo, puedes ajustarlo
-                imgStatic: "image_b6dce1.jpg",
-                imgGif: "WhatsApp Video 2026-03-25 at 15.46.36.gif"
+                precio: 18500,
+                imgStatic: "libro.jpeg",
+                imgGif: "libro.gif"
             },
             {
                 id: 2,
@@ -387,9 +386,9 @@
                 formato: "Libro Digital",
                 descripcion: "Páginas cargadas de vida, con alegría y dolor. Admirable por la resiliencia que brota allí. Una invitación a habitar nuestra vida sin máscaras.",
                 infoCorta: "Opción para comprar libro virtual.",
-                precio: 8900, // Precio de ejemplo, puedes ajustarlo
-                imgStatic: "image_b6dce1.jpg",
-                imgGif: "WhatsApp Video 2026-03-25 at 15.46.36.gif"
+                precio: 8900,
+                imgStatic: "libro.jpeg",
+                imgGif: "libro.gif"
             }
         ];
 
