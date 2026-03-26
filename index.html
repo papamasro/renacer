@@ -85,39 +85,41 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
+            object-position: center 15%; /* Imagen tirada hacia arriba para centrarla visualmente con el texto */
             transition: opacity 0.8s ease, transform 1.2s ease;
         }
-        .img-static { z-index: 1; opacity: 1; }
-        .img-gif { z-index: 2; opacity: 0; }
+        .img-static { z-index: 2; opacity: 0; }
+        .img-gif { z-index: 1; opacity: 1; transform: scale(1.03); }
 
-        /* Fondo sólido oscuro para el texto en estado normal (Cubre la mitad inferior) */
+        /* Fondo sólido oscuro para el texto (Aparece en hover) */
         .solid-bg {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 46%;
+            height: 48%;
             background: linear-gradient(to bottom, #07121a 0%, #03080c 100%);
             border-top: 1px solid rgba(212, 175, 55, 0.15);
             z-index: 3;
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.6s ease;
         }
 
-        /* Gradiente oscuro que aparece en hover para que el texto siga siendo legible sobre el GIF */
+        /* Gradiente oscuro que aparece en hover para que el texto siga siendo legible */
         .hover-gradient {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 50%;
+            height: 60%;
             background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 40%, transparent 100%);
             z-index: 4;
             opacity: 0;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.5s ease;
         }
 
-        /* Contenedor del contenido (Texto y Botones) */
+        /* Contenedor del contenido (Texto y Botones) - Oculto por defecto */
         .content-layer {
             position: absolute;
             bottom: 0;
@@ -128,15 +130,15 @@
             display: flex;
             flex-direction: column;
             pointer-events: none; /* Permite que el click pase a través del espacio vacío */
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .content-layer > * { pointer-events: auto; }
 
-        /* Envoltorio de la descripción (Desaparece en hover) */
+        /* Envoltorio de la descripción (Visible en hover) */
         .desc-wrapper {
-            max-height: 200px;
             opacity: 1;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             margin-top: 1rem;
             margin-bottom: 1.5rem;
         }
@@ -148,18 +150,15 @@
                 box-shadow: 0 40px 80px -15px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.4);
                 border-color: var(--accent);
             }
-            /* El GIF aparece y hace un ligero zoom */
-            .product-card:hover .img-static { opacity: 0; }
-            .product-card:hover .img-gif { opacity: 1; transform: scale(1.05); }
+            /* El GIF desaparece y aparece la estática */
+            .product-card:hover .img-static { opacity: 1; transform: scale(1.02); }
+            .product-card:hover .img-gif { opacity: 0; transform: scale(1); }
             
-            /* El fondo sólido desaparece hacia abajo */
-            .product-card:hover .solid-bg { opacity: 0; transform: translateY(20px); }
-            
-            /* Aparece el gradiente transparente para legibilidad */
+            /* El fondo sólido y textos aparecen hacia arriba */
+            .product-card:hover .solid-bg { opacity: 1; transform: translateY(0); }
             .product-card:hover .hover-gradient { opacity: 1; }
-            
-            /* La descripción se colapsa y desaparece */
-            .product-card:hover .desc-wrapper { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
+            .product-card:hover .content-layer { opacity: 1; transform: translateY(0); }
+            .product-card:hover .format-badge { opacity: 0; }
         }
 
         /* --- ESTADOS INTERACTIVOS (MÓVIL - Clase .active) --- */
@@ -168,11 +167,12 @@
             box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(212, 175, 55, 0.4);
             border-color: var(--accent);
         }
-        .product-card.active .img-static { opacity: 0; }
-        .product-card.active .img-gif { opacity: 1; transform: scale(1.05); }
-        .product-card.active .solid-bg { opacity: 0; transform: translateY(20px); }
+        .product-card.active .img-static { opacity: 1; transform: scale(1.02); }
+        .product-card.active .img-gif { opacity: 0; transform: scale(1); }
+        .product-card.active .solid-bg { opacity: 1; transform: translateY(0); }
         .product-card.active .hover-gradient { opacity: 1; }
-        .product-card.active .desc-wrapper { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
+        .product-card.active .content-layer { opacity: 1; transform: translateY(0); }
+        .product-card.active .format-badge { opacity: 0; }
 
         /* --- ZOOM MODAL --- */
         #zoom-modal {
@@ -298,7 +298,17 @@
         <div class="mb-16 text-center">
             <h2 class="text-4xl md:text-6xl font-serif text-white mb-6 italic drop-shadow-lg">Descubre la obra</h2>
             <div class="w-24 h-px bg-[#d4af37] mx-auto mb-6 opacity-60"></div>
-            <p class="text-slate-400 font-light tracking-wide text-base md:text-lg max-w-2xl mx-auto">
+            
+            <!-- Frase movida y rediseñada -->
+            <div class="my-10 md:my-16 relative">
+                <i class="fas fa-quote-left text-4xl text-[#d4af37]/20 absolute -top-4 -left-4 md:left-4"></i>
+                <p class="text-slate-300 font-serif italic text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed px-6 relative z-10 text-shadow-sm">
+                    "Páginas cargadas de vida, con alegría y dolor. Admirable por la resiliencia que brota allí. Una invitación a habitar nuestra vida sin máscaras."
+                </p>
+                <i class="fas fa-quote-right text-4xl text-[#d4af37]/20 absolute -bottom-4 -right-4 md:right-4"></i>
+            </div>
+
+            <p class="text-slate-400 font-light text-sm md:text-base max-w-2xl mx-auto mt-10 uppercase font-brand tracking-[0.2em] border-t border-white/5 pt-8">
                 Selecciona la edición que mejor se adapte a tu forma de lectura.
             </p>
         </div>
@@ -372,7 +382,7 @@
                 id: 1,
                 nombre: "Renacer",
                 formato: "Libro Físico",
-                descripcion: "Páginas cargadas de vida, con alegría y dolor. Admirable por la resiliencia que brota allí. Una invitación a habitar nuestra vida sin máscaras.",
+                descripcion: "Siente el peso de cada palabra y el aroma del papel. Un ejemplar para sostener en tus manos, marcar tus frases favoritas y atesorar en tu biblioteca personal para siempre.",
                 precio: 18500,
                 imgStatic: "libro.jpeg",
                 imgGif: "libro.gif"
@@ -381,7 +391,7 @@
                 id: 2,
                 nombre: "Renacer",
                 formato: "Libro Digital",
-                descripcion: "Páginas cargadas de vida, con alegría y dolor. Admirable por la resiliencia que brota allí. Una invitación a habitar nuestra vida sin máscaras.",
+                descripcion: "La inmensidad de la obra en la palma de tu mano. Acceso inmediato para sumergirte en sus páginas desde cualquier pantalla, llevándola contigo a donde sea que vayas.",
                 precio: 8900,
                 imgStatic: "libro.jpeg",
                 imgGif: "libro.gif"
@@ -412,24 +422,29 @@
             grid.innerHTML = items.map(p => `
                 <div class="product-card group" id="card-${p.id}" onclick="handleMobileClick(this, event)">
                     
-                    <!-- Capa 1: Imágenes (Estática encima del GIF por defecto) -->
-                    <img class="img-layer img-gif" src="${p.imgGif}" alt="${p.nombre} Animado" loading="lazy">
+                    <!-- Etiqueta sutil para saber qué formato es antes del hover -->
+                    <div class="format-badge absolute top-4 right-4 z-[10] bg-black/50 backdrop-blur-md border border-[#d4af37]/30 px-4 py-1.5 rounded-full pointer-events-none transition-opacity duration-500">
+                        <span class="text-[#d4af37] font-brand text-[10px] tracking-widest uppercase font-bold">${p.formato}</span>
+                    </div>
+
+                    <!-- Capa 1: Imágenes (GIF encima de la estática por defecto) -->
                     <img class="img-layer img-static" src="${p.imgStatic}" alt="${p.nombre} Portada" loading="lazy">
+                    <img class="img-layer img-gif" src="${p.imgGif}" alt="${p.nombre} Animado" loading="lazy">
                     
                     <!-- Capa 2: Gradiente suave para el hover -->
                     <div class="hover-gradient"></div>
 
-                    <!-- Capa 3: Fondo oscuro sólido (estado normal) -->
+                    <!-- Capa 3: Fondo oscuro sólido (estado hover) -->
                     <div class="solid-bg"></div>
 
                     <!-- Capa 4: Contenido de Texto -->
                     <div class="content-layer">
-                        <div class="transform transition-transform duration-500 group-hover:translate-y-1">
+                        <div>
                             <h3 class="text-white font-brand text-3xl tracking-wider leading-tight drop-shadow-lg">${p.nombre}</h3>
                             <p class="text-[#d4af37] font-serif italic text-base mt-1 drop-shadow-md">${p.formato}</p>
                         </div>
 
-                        <!-- El texto que desaparece mágicamente -->
+                        <!-- Textos Poéticos -->
                         <div class="desc-wrapper">
                             <div class="w-12 h-px bg-[#d4af37] mb-4 opacity-50"></div>
                             <p class="text-[14px] text-slate-300 leading-relaxed font-light font-serif border-l-2 border-[#d4af37]/50 pl-4">
@@ -438,7 +453,7 @@
                         </div>
                         
                         <!-- Controles (Precio y botones) flotantes -->
-                        <div class="flex items-center justify-between gap-4 transform transition-transform duration-500 group-hover:-translate-y-1">
+                        <div class="flex items-center justify-between gap-4 mt-auto">
                             <p class="text-white font-serif text-3xl text-gold-glow drop-shadow-md">$${p.precio.toLocaleString('es-AR')}</p>
                             
                             <div class="flex items-center gap-3">
