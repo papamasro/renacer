@@ -60,125 +60,119 @@
             border-bottom: 1px solid rgba(212, 175, 55, 0.15);
         }
 
-        /* --- LÓGICA DE TARJETAS (Más grandes y premium) --- */
-        .card-wrapper {
+        /* --- NUEVA LÓGICA DE TARJETAS (ESTADO NORMAL = COMPLETO, HOVER = IMAGEN FULL) --- */
+        .product-card {
             position: relative;
-            height: 42rem; /* Aumentado para mayor presencia */
-            z-index: 10;
-            perspective: 1000px;
+            height: 42rem;
+            width: 100%;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8);
+            background-color: var(--bg-card);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
+
         /* Cursor pointer solo en móvil, en desktop se indica visualmente */
         @media (max-width: 768px) {
-            .card-wrapper { cursor: pointer; }
+            .product-card { cursor: pointer; }
         }
-        
-        .product-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            width: 100%;
-            height: 100%;
+
+        /* Capas de Imágenes (Ocupan el 100% del fondo siempre) */
+        .img-layer {
             position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-radius: 0.5rem;
-            z-index: 10;
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.9);
-        }
-
-        /* --- IMAGEN CON EFECTO HOVER GIF MEJORADO --- */
-        .img-container {
-            height: 28rem; /* Imagen significativamente más grande */
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            background: #000;
-            flex-shrink: 0;
-            cursor: zoom-in; /* Indica que se puede ampliar */
-        }
-
-        .img-container img {
+            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: top; 
-            transition: opacity 0.5s ease, transform 0.8s ease;
+            object-position: center;
+            transition: opacity 0.8s ease, transform 1.2s ease;
+        }
+        .img-static { z-index: 1; opacity: 1; }
+        .img-gif { z-index: 2; opacity: 0; }
+
+        /* Fondo sólido oscuro para el texto en estado normal (Cubre la mitad inferior) */
+        .solid-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 46%;
+            background: linear-gradient(to bottom, #07121a 0%, #03080c 100%);
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            z-index: 3;
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
-        /* Estado inicial: Estática visible, GIF invisible */
-        .img-static {
+        /* Gradiente oscuro que aparece en hover para que el texto siga siendo legible sobre el GIF */
+        .hover-gradient {
             position: absolute;
-            inset: 0;
-            z-index: 2;
-            opacity: 1;
-        }
-
-        .img-gif {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 40%, transparent 100%);
+            z-index: 4;
             opacity: 0;
+            transition: opacity 0.8s ease;
         }
 
-        /* --- CONTENIDO DE TEXTO --- */
-        .card-content {
+        /* Contenedor del contenido (Texto y Botones) */
+        .content-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             padding: 2rem;
+            z-index: 5;
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
-            background: linear-gradient(to bottom, var(--bg-card), #03080c);
+            pointer-events: none; /* Permite que el click pase a través del espacio vacío */
         }
-        
-        .hidden-details {
-            max-height: 0;
-            opacity: 0;
+        .content-layer > * { pointer-events: auto; }
+
+        /* Envoltorio de la descripción (Desaparece en hover) */
+        .desc-wrapper {
+            max-height: 200px;
+            opacity: 1;
             overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         /* --- ESTADOS INTERACTIVOS (DESKTOP) --- */
         @media (hover: hover) and (pointer: fine) {
-            .card-wrapper:hover { z-index: 50; }
-            .card-wrapper:hover .product-card {
-                transform: translateY(-12px);
-                box-shadow: 0 40px 80px -20px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.6);
+            .product-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 40px 80px -15px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.4);
                 border-color: var(--accent);
-                height: auto;
-                min-height: 100%;
             }
-            /* Lógica del GIF: Oculta estática, muestra GIF y hace ligero zoom */
-            .card-wrapper:hover .img-static { opacity: 0; }
-            .card-wrapper:hover .img-gif { opacity: 1; }
-            .card-wrapper:hover .img-container img { transform: scale(1.05); }
+            /* El GIF aparece y hace un ligero zoom */
+            .product-card:hover .img-static { opacity: 0; }
+            .product-card:hover .img-gif { opacity: 1; transform: scale(1.05); }
             
-            .card-wrapper:hover .hidden-details {
-                max-height: 500px;
-                opacity: 1;
-                margin-top: 1.5rem;
-            }
+            /* El fondo sólido desaparece hacia abajo */
+            .product-card:hover .solid-bg { opacity: 0; transform: translateY(20px); }
+            
+            /* Aparece el gradiente transparente para legibilidad */
+            .product-card:hover .hover-gradient { opacity: 1; }
+            
+            /* La descripción se colapsa y desaparece */
+            .product-card:hover .desc-wrapper { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
         }
 
-        /* --- ESTADOS INTERACTIVOS (MÓVIL) --- */
-        .card-wrapper.active { z-index: 60; }
-        .card-wrapper.active .product-card {
-            transform: translateY(-8px);
-            box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(212, 175, 55, 0.5);
+        /* --- ESTADOS INTERACTIVOS (MÓVIL - Clase .active) --- */
+        .product-card.active {
+            transform: translateY(-5px);
+            box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(212, 175, 55, 0.4);
             border-color: var(--accent);
-            height: auto;
-            min-height: 100%;
         }
-        /* Igual que en desktop: muestra GIF y oculta estática al estar activo */
-        .card-wrapper.active .img-static { opacity: 0; }
-        .card-wrapper.active .img-gif { opacity: 1; }
-        .card-wrapper.active .img-container img { transform: scale(1.05); }
-        .card-wrapper.active .hidden-details {
-            max-height: 500px;
-            opacity: 1;
-            margin-top: 1.5rem;
-        }
+        .product-card.active .img-static { opacity: 0; }
+        .product-card.active .img-gif { opacity: 1; transform: scale(1.05); }
+        .product-card.active .solid-bg { opacity: 0; transform: translateY(20px); }
+        .product-card.active .hover-gradient { opacity: 1; }
+        .product-card.active .desc-wrapper { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
 
         /* --- ZOOM MODAL --- */
         #zoom-modal {
@@ -228,7 +222,8 @@
 
         /* --- BOTONES DE ACCIÓN --- */
         .btn-action {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
             border: 1px solid var(--accent);
             color: var(--accent);
             position: relative;
@@ -308,7 +303,7 @@
             </p>
         </div>
 
-        <!-- GRID DE PRODUCTOS (Espacio ampliado) -->
+        <!-- GRID DE PRODUCTOS -->
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 pb-16">
             <!-- Los productos se inyectan por JS -->
         </div>
@@ -403,10 +398,9 @@
             const sharedId = params.get('p');
             if (sharedId !== null) {
                 setTimeout(() => {
-                    const targetCard = document.getElementById(`wrapper-${sharedId}`);
+                    const targetCard = document.getElementById(`card-${sharedId}`);
                     if (targetCard) {
                         targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        // Forzamos la apertura si vienen por link
                         targetCard.classList.add('active'); 
                     }
                 }, 500);
@@ -416,43 +410,44 @@
         function displayProducts(items) {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = items.map(p => `
-                <div class="card-wrapper group" id="wrapper-${p.id}" onclick="handleMobileClick(this, event)">
-                    <div class="product-card">
-                        
-                        <div class="img-container" onclick="openZoom('${p.imgStatic}', event)">
-                            <!-- El GIF y la estática coexisten. La opacidad se controla por CSS -->
-                            <img class="img-gif" src="${p.imgGif}" alt="${p.nombre} Animado" loading="lazy">
-                            <img class="img-static" src="${p.imgStatic}" alt="${p.nombre} Portada" loading="lazy">
-                            
-                            <!-- Gradiente superpuesto sutil que desaparece en hover -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none opacity-60 group-hover:opacity-0 transition-opacity duration-500"></div>
+                <div class="product-card group" id="card-${p.id}" onclick="handleMobileClick(this, event)">
+                    
+                    <!-- Capa 1: Imágenes (Estática encima del GIF por defecto) -->
+                    <img class="img-layer img-gif" src="${p.imgGif}" alt="${p.nombre} Animado" loading="lazy">
+                    <img class="img-layer img-static" src="${p.imgStatic}" alt="${p.nombre} Portada" loading="lazy">
+                    
+                    <!-- Capa 2: Gradiente suave para el hover -->
+                    <div class="hover-gradient"></div>
+
+                    <!-- Capa 3: Fondo oscuro sólido (estado normal) -->
+                    <div class="solid-bg"></div>
+
+                    <!-- Capa 4: Contenido de Texto -->
+                    <div class="content-layer">
+                        <div class="transform transition-transform duration-500 group-hover:translate-y-1">
+                            <h3 class="text-white font-brand text-3xl tracking-wider leading-tight drop-shadow-lg">${p.nombre}</h3>
+                            <p class="text-[#d4af37] font-serif italic text-base mt-1 drop-shadow-md">${p.formato}</p>
                         </div>
 
-                        <div class="card-content">
-                            <div class="flex flex-col mb-2">
-                                <h3 class="text-white font-brand text-3xl tracking-wider leading-tight">${p.nombre}</h3>
-                                <p class="text-[#d4af37] font-serif italic text-base mt-1">${p.formato}</p>
-                            </div>
-
-                            <div class="hidden-details flex flex-col h-full justify-end">
-                                <div class="w-12 h-px bg-[#d4af37] mb-4 opacity-50"></div>
-                                
-                                <p class="text-[15px] text-slate-300 leading-relaxed font-light mb-8 font-serif italic border-l-2 border-[#d4af37]/50 pl-4">
-                                    "${p.descripcion}"
-                                </p>
-                                
-                                <div class="mt-auto flex items-center justify-between gap-4">
-                                    <p class="text-white font-serif text-3xl text-gold-glow">$${p.precio.toLocaleString('es-AR')}</p>
-                                    
-                                    <div class="flex items-center gap-3">
-                                        <button onclick="shareProduct(${p.id}, event)" class="w-12 h-12 rounded-full border border-yellow-600/30 hover:bg-[#d4af37] hover:text-black flex items-center justify-center text-slate-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all pointer-events-auto shrink-0" title="Compartir libro">
-                                            <i class="fas fa-share-alt"></i>
-                                        </button>
-                                        <button onclick="addToCart(${p.id}, event)" class="btn-action px-8 py-3.5 text-xs font-brand uppercase tracking-widest font-bold rounded-sm">
-                                            Añadir
-                                        </button>
-                                    </div>
-                                </div>
+                        <!-- El texto que desaparece mágicamente -->
+                        <div class="desc-wrapper">
+                            <div class="w-12 h-px bg-[#d4af37] mb-4 opacity-50"></div>
+                            <p class="text-[14px] text-slate-300 leading-relaxed font-light font-serif border-l-2 border-[#d4af37]/50 pl-4">
+                                "${p.descripcion}"
+                            </p>
+                        </div>
+                        
+                        <!-- Controles (Precio y botones) flotantes -->
+                        <div class="flex items-center justify-between gap-4 transform transition-transform duration-500 group-hover:-translate-y-1">
+                            <p class="text-white font-serif text-3xl text-gold-glow drop-shadow-md">$${p.precio.toLocaleString('es-AR')}</p>
+                            
+                            <div class="flex items-center gap-3">
+                                <button onclick="shareProduct(${p.id}, event)" class="w-12 h-12 rounded-full border border-yellow-600/30 hover:bg-[#d4af37] hover:text-black flex items-center justify-center text-slate-300 transition-all shrink-0 bg-black/40 backdrop-blur-sm hover:scale-110" title="Compartir libro">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button onclick="addToCart(${p.id}, event)" class="btn-action px-6 sm:px-8 py-3.5 text-xs font-brand uppercase tracking-widest font-bold rounded-sm">
+                                    Añadir
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -460,29 +455,27 @@
             `).join('');
         }
         
-        // Manejo inteligente de clicks (KISS): 
-        // Si el usuario está en PC (ancho > 768), el hover CSS hace el trabajo, el click no hace nada en la tarjeta.
-        // Si está en celular, el click abre/cierra los detalles.
         function handleMobileClick(el, e) {
-            // Previene que se cierre si el usuario hace click dentro de la tarjeta pero no en botones
+            // Ignora el click en desktop porque ya funciona el "hover" (KISS)
             if(window.innerWidth > 768) return; 
 
             const wasActive = el.classList.contains('active');
             
-            // Cerrar otras tarjetas abiertas
-            document.querySelectorAll('.card-wrapper.active').forEach(c => {
+            // Cierra las demás
+            document.querySelectorAll('.product-card.active').forEach(c => {
                 c.classList.remove('active');
             });
             
+            // Alterna la actual
             if (!wasActive) {
                 el.classList.add('active');
             }
         }
 
-        // Cierra la tarjeta si se hace click fuera (Solo en móvil)
+        // Cierra el "efecto" en móvil si tocas en cualquier lado fuera de la tarjeta
         document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768 && !e.target.closest('.card-wrapper')) {
-                document.querySelectorAll('.card-wrapper.active').forEach(c => {
+            if (window.innerWidth <= 768 && !e.target.closest('.product-card')) {
+                document.querySelectorAll('.product-card.active').forEach(c => {
                     c.classList.remove('active');
                 });
             }
