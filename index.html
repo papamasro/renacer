@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PZKLWSRX');</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BWVHZMR8Y7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BWVHZMR8Y7');
+</script>
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -228,9 +231,7 @@
         }
     </style>
 </head>
-<body class="antialiased">
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PZKLWSRX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    
+<body class="antialiased">    
     <div id="zoom-modal" onclick="this.classList.remove('open')">
         <button class="absolute top-5 right-5 text-[#d4af37] text-4xl">&times;</button>
         <img id="zoom-img" class="max-w-[90vw] max-h-[90vh] object-contain shadow-2xl border border-yellow-600/20" src="">
@@ -489,7 +490,15 @@
             });
             msg += `%0A💰 *TOTAL: $${total.toLocaleString('es-AR')}*%0A`;
             msg += `✉️ *Mi email es:* ${email}%0A%0A_Hola Leonor, quiero coordinar mi pedido._`;
-            
+            // Registrar evento de compra en Google Analytics
+            if (typeof gtag === 'function') {
+                gtag('event', 'compra_whatsapp', {
+                    'event_category': 'Ventas',
+                    'event_label': 'Clic Finalizar Pedido',
+                    'value': total,
+                    'currency': 'ARS'
+                });
+            }
             window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${msg}`, '_blank');
         }
 
